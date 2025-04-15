@@ -13,7 +13,7 @@ struct SignInView: View {
     @State private var navigateHome : Bool =  false
     @State private var navigateRegister : Bool =  false
     var loginAction: (Bool) -> Void
-
+    
     var body: some View {
         NavigationStack{
             ZStack{
@@ -36,9 +36,9 @@ struct SignInView: View {
                             Text("Paddy")
                                 .font(.system(size: 40, weight: .semibold))
                                 .foregroundColor(.white)
-                                 Text("Trade")
-                                     .font(.system(size: 40, weight: .semibold))
-                                     .foregroundColor(.lightGreen)
+                            Text("Trade")
+                                .font(.system(size: 40, weight: .semibold))
+                                .foregroundColor(.lightGreen)
                         }
                         
                         Text("Find Quality Paddy")
@@ -78,7 +78,7 @@ struct SignInView: View {
                         )
                         .onTapGesture {
                             loginAction(true)
-
+                            
                             navigateHome = true
                             userId =  ""
                             password = ""
@@ -107,7 +107,7 @@ struct SignInView: View {
                         
                         
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal,25)
                     .padding(.top)
                     
                     
