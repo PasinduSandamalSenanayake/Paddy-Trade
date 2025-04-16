@@ -44,8 +44,33 @@ struct HomeView: View {
             }
             .padding()
         }
+        .onAppear {
+            NotificationManager.shared.requestAuthorization()
+            NotificationManager.shared.scheduleNotification(
+                title: "Reminder",
+                body: "Check your Paddy Trade stats!",
+                afterSeconds: 10
+            )
+
+            NotificationManager.shared.requestAuthorization()
+            NotificationManager.shared.scheduleNotification(
+                title: "Reminder 2",
+                body: "Check your Paddy Trade stats!",
+                afterSeconds: 20
+            )
+            
+            NotificationManager.shared.requestAuthorization()
+            NotificationManager.shared.scheduleNotification(
+                title: "Reminder 3",
+                body: "Check your Paddy Trade stats!",
+                afterSeconds: 30
+            )
+
+        }
     }
+        
 }
+
 
 struct CardData: Identifiable {
     let id = UUID()

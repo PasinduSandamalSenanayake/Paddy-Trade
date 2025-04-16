@@ -21,9 +21,10 @@ struct ContentView: View {
         if isAuthenticated {
             HomeView()
         } else if showLogin {
-            SignInView(loginAction: {_ in 
-                
-            })
+            HomeView()
+//            SignInView(loginAction: {_ in
+//                
+//            })
         } else {
             SplashView()
                 .onAppear(perform: authenticateUser)
