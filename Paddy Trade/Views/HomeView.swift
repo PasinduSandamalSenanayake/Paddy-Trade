@@ -16,60 +16,68 @@ struct HomeView: View {
     ]
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    
+
     var body: some View {
-        ScrollView {
-            VStack {
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading) {
-                        Text("Good Morning")
-                            .font(.system(size: 12 , weight: .regular))
-                        Text("Sandamal Senayake")
-                            .font(.system(size: 22 , weight: .semibold))
+        NavigationView {
+            ScrollView {
+                VStack {
+                    HStack(alignment: .center) {
+                        VStack(alignment: .leading) {
+                            Text("Good Morning")
+                                .font(.system(size: 12 , weight: .regular))
+                            Text("Sandamal Senayake")
+                                .font(.system(size: 22 , weight: .semibold))
+                        }
+                        Spacer()
+                        Image(systemName: "bell.fill")
+                            .fontWeight(.medium)
+                            .font(.system(size: 25))
+                            .padding(.top, 3)
+                            .foregroundColor(.splashGreen)
                     }
-                    Spacer()
-                    Image(systemName: "bell.fill")
-                        .fontWeight(.medium)
-                        .font(.system(size: 25))
-                        .padding(.top, 3)
-                        .foregroundColor(.splashGreen)
                 }
-            }
-            .padding()
-            
-            LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(cards) { card in
-                    CardView(card: card)
+                .padding()
+                
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(cards) { card in
+                        if card.title == "Place A Bid" {
+                            NavigationLink(destination: BidListView()) {
+                                CardView(card: card)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        } else {
+                            CardView(card: card)
+                        }
+                    }
                 }
+                .padding()
             }
-            .padding()
-        }
-        .onAppear {
-            NotificationManager.shared.requestAuthorization()
-            NotificationManager.shared.scheduleNotification(
-                title: "Reminder",
-                body: "Check your Paddy Trade stats!",
-                afterSeconds: 10
-            )
+            .navigationTitle("")
+            .navigationBarHidden(true)
+            .onAppear {
+                NotificationManager.shared.requestAuthorization()
+                NotificationManager.shared.scheduleNotification(
+                    title: "Reminder",
+                    body: "Check your Paddy Trade stats!",
+                    afterSeconds: 10
+                )
 
-            NotificationManager.shared.requestAuthorization()
-            NotificationManager.shared.scheduleNotification(
-                title: "Reminder 2",
-                body: "Check your Paddy Trade stats!",
-                afterSeconds: 20
-            )
-            
-            NotificationManager.shared.requestAuthorization()
-            NotificationManager.shared.scheduleNotification(
-                title: "Reminder 3",
-                body: "Check your Paddy Trade stats!",
-                afterSeconds: 30
-            )
-
+                NotificationManager.shared.scheduleNotification(
+                    title: "Reminder 2",
+                    body: "Check your Paddy Trade stats!",
+                    afterSeconds: 20
+                )
+                
+                NotificationManager.shared.scheduleNotification(
+                    title: "Reminder 3",
+                    body: "Check your Paddy Trade stats!",
+                    afterSeconds: 30
+                )
+            }
         }
     }
-        
 }
+
 
 
 struct CardData: Identifiable {
