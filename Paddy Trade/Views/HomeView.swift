@@ -56,23 +56,24 @@ struct HomeView: View {
             .navigationBarHidden(true)
             .onAppear {
                 NotificationManager.shared.requestAuthorization()
-                NotificationManager.shared.scheduleNotification(
-                    title: "Reminder",
-                    body: "Check your Paddy Trade stats!",
-                    afterSeconds: 10
-                )
-
-                NotificationManager.shared.scheduleNotification(
-                    title: "Reminder 2",
-                    body: "Check your Paddy Trade stats!",
-                    afterSeconds: 20
-                )
-                
-                NotificationManager.shared.scheduleNotification(
-                    title: "Reminder 3",
-                    body: "Check your Paddy Trade stats!",
-                    afterSeconds: 30
-                )
+                // For Test
+//                NotificationManager.shared.scheduleNotification(
+//                    title: "Reminder",
+//                    body: "Check your Paddy Trade stats!",
+//                    afterSeconds: 10
+//                )
+//
+//                NotificationManager.shared.scheduleNotification(
+//                    title: "Reminder 2",
+//                    body: "Check your Paddy Trade stats!",
+//                    afterSeconds: 20
+//                )
+//                
+//                NotificationManager.shared.scheduleNotification(
+//                    title: "Reminder 3",
+//                    body: "Check your Paddy Trade stats!",
+//                    afterSeconds: 30
+//                )
             }
         }
     }

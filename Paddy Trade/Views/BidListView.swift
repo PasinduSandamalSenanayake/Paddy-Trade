@@ -10,11 +10,12 @@ import SwiftUI
 
 struct BidListView: View {
     
-   
+    
     
     @State private var searchString: String = ""
     @State private var showFilterSheet = false
     @State private var filters = FilterData()
+    @Environment(\.presentationMode) var presentationMode
     
     let bidData: [Bid] = [
         Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Anuradhapura", price: 125, totalWeight: 1545, date: "2025/03/15"),
@@ -24,27 +25,38 @@ struct BidListView: View {
     ]
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack{
-                Text("Place the bid")
-                    .font(.system(size: 22))
-                    .fontWeight(.bold)
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top,10)
-            SearchBar(searchString: $searchString, onFilterTapped: {
-                showFilterSheet = true
-            })
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(filteredBids) { bid in
-                        BidCardView(bid: bid)
-                    }
+            VStack(spacing: 0) {
+                HStack{
+                    Text("Place the bid")
+                        .font(.system(size: 22))
+                        .fontWeight(.bold)
+                    Spacer()
                 }
-                .padding()
+                .padding(.horizontal)
+                .padding(.top,10)
+                SearchBar(searchString: $searchString, onFilterTapped: {
+                    showFilterSheet = true
+                })
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(filteredBids) { bid in
+                            NavigationLink(destination: BidDetailView(bid: bid)) {
+                                BidCardView(bid: bid)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding()
+                }
             }
-        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "chevron.left")
+                .foregroundColor(Color.splashGreen)
+        })
+        
         .sheet(isPresented: $showFilterSheet) {
             FilterView(filters: $filters, allLocations: Array(Set(bidData.map { $0.location })))
         }
@@ -62,7 +74,8 @@ struct BidListView: View {
             return matchesSearch && matchesLocation && matchesPrice && matchesWeight
         }
     }
-
+       
+    
 }
 
 struct SearchBar: View {
@@ -135,15 +148,7 @@ struct BidCardView: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                     Spacer()
-                    Button(action: {
-                        NotificationManager.shared.requestAuthorization()
-                        NotificationManager.shared.scheduleNotification(
-                            title: "Bid Place Sucess!",
-                            body: "You have placed bid sucessfully",
-                            afterSeconds: 1
-                        )
-
-                    }) {
+                    VStack{
                         Text("Place a Bid")
                             .fontWeight(.semibold)
                             .font(.system(size: 12))
@@ -186,14 +191,14 @@ struct FilterView: View {
                         }
                     }
                 }
-
+                
                 Section(header: Text("Price (Rs)")) {
                     TextField("Min Price", value: $filters.minPrice, formatter: NumberFormatter())
                         .keyboardType(.decimalPad)
                     TextField("Max Price", value: $filters.maxPrice, formatter: NumberFormatter())
                         .keyboardType(.decimalPad)
                 }
-
+                
                 Section(header: Text("Minimum Weight (kg)")) {
                     TextField("Min Weight", value: $filters.minWeight, formatter: NumberFormatter())
                         .keyboardType(.decimalPad)
@@ -217,7 +222,7 @@ struct MultipleSelectionRow: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             HStack {
