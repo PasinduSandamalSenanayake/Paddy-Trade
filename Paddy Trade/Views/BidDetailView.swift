@@ -87,7 +87,15 @@ struct BidDetailView: View {
                                 .foregroundColor(.black)
                         }
                         
-                        NavigationLink(destination: MapDisplayView(bid: bid)) {
+                        Button {
+                            self.presentationMode.wrappedValue.dismiss()
+                            NotificationManager.shared.requestAuthorization()
+                            NotificationManager.shared.scheduleNotification(
+                                title: "Bid Place Sucess!",
+                                body: "You have placed bid sucessfully",
+                                afterSeconds: 1
+                            )
+                        } label: {
                             Text("Place The Bid")
                                 .font(.headline)
                                 .padding()
@@ -96,6 +104,9 @@ struct BidDetailView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                         }
+                        
+                        
+                        
                         .padding(.top, 10)
                     }
                     .padding()
