@@ -18,12 +18,13 @@ struct BidListView: View {
     @Environment(\.presentationMode) var presentationMode
     
     let bidData: [Bid] = [
-        Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Anuradhapura", price: 125, totalWeight: 1545, date: "2025/03/15"),
-        Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Polonnaruwa", price: 127, totalWeight: 1578, date: "2025/03/10"),
-        Bid(imageName: "paddy_image", name: "Nadu Paddy", location: "Ampara", price: 118, totalWeight: 1255, date: "2025/03/11"),
-        Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Kandy", price: 129, totalWeight: 1788, date: "2025/03/17")
+            Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Anuradhapura", price: 125, totalWeight: 1545, date: "2025/03/15", latitude: 8.3114, longitude: 80.4037),
+            Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Polonnaruwa", price: 127, totalWeight: 1578, date: "2025/03/10", latitude: 7.9403, longitude: 81.0188),
+            Bid(imageName: "paddy_image", name: "Nadu Paddy", location: "Ampara", price: 118, totalWeight: 1255, date: "2025/03/11", latitude: 7.2944, longitude: 81.6828),
+            Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Kandy", price: 129, totalWeight: 1788, date: "2025/03/17", latitude: 7.2906, longitude: 80.6337)
+        
     ]
-    
+
     var body: some View {
             VStack(spacing: 0) {
                 HStack{

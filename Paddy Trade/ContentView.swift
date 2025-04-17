@@ -11,6 +11,8 @@ import LocalAuthentication
 struct ContentView: View {
     @State private var isAuthenticated = false
     @State private var showLogin = false
+    @StateObject private var locationManager = LocationManager()
+
 
     var body: some View {
         content

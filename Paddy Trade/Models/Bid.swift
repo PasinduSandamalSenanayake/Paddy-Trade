@@ -15,4 +15,6 @@ struct Bid: Identifiable {
     let price: Int
     let totalWeight: Int
     let date: String
+    let latitude: Double
+    let longitude: Double
 }
