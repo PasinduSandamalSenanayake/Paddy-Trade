@@ -22,7 +22,6 @@ struct BidDetailView: View {
     }
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
                     Image(bid.imageName)
@@ -111,7 +110,6 @@ struct BidDetailView: View {
                     }
                     .padding()
                 }
-            }
             
         }
         .navigationBarBackButtonHidden(true)

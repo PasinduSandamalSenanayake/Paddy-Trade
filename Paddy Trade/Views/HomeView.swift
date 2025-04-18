@@ -45,6 +45,11 @@ struct HomeView: View {
                                 CardView(card: card)
                             }
                             .buttonStyle(PlainButtonStyle())
+                        } else if card.title == "Bid Analysis" {
+                            NavigationLink(destination: BidAnalyzingView()) {
+                                CardView(card: card)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         } else {
                             CardView(card: card)
                         }

@@ -17,4 +17,14 @@ struct Bid: Identifiable {
     let date: String
     let latitude: Double
     let longitude: Double
+    var status: BidStatus? = .pending
+
 }
+
+enum BidStatus: String, CaseIterable {
+    case pending = "Pending"
+    case accepted = "Accepted"
+    case rejected = "Rejected"
+}
+
+
