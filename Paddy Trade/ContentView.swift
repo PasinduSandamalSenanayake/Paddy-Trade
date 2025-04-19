@@ -23,15 +23,17 @@ struct ContentView: View {
         if isAuthenticated {
             HomeView()
         } else if showLogin {
-            HomeView()
-//            SignInView(loginAction: {_ in
-//                
-//            })
+            SignInView(loginAction: { success in
+                if success {
+                    isAuthenticated = true
+                }
+            })
         } else {
             SplashView()
                 .onAppear(perform: authenticateUser)
         }
     }
+
 
     func authenticateUser() {
         let context = LAContext()

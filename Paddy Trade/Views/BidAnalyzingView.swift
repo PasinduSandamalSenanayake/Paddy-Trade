@@ -17,6 +17,28 @@ struct BidAnalyzingView: View {
         Bid(imageName: "paddy_image", name: "Nadu", location: "Kekirawa", price: 118, totalWeight: 1000, date: "2025/03/10", latitude: 8.2345, longitude: 80.2345, status: .rejected),
         Bid(imageName: "paddy_image", name: "Samba", location: "Anuradhapura", price: 127, totalWeight: 1100, date: "2025/03/13", latitude: 8.3456, longitude: 80.3456, status: .pending)
     ]
+    
+    var pending: Int {
+        bidData.filter { $0.status == .pending }.count
+    }
+
+    var accepted: Int {
+        bidData.filter { $0.status == .accepted }.count
+    }
+
+    var rejected: Int {
+        bidData.filter { $0.status == .rejected }.count
+    }
+
+    var total: Int {
+        pending + accepted + rejected
+    }
+
+    var acceptedPercentage: Int {
+        guard total > 0 else { return 0 }
+        return Int((Double(accepted) / Double(total)) * 100)
+    }
+
 
     var statusCounts: [BidStatus: Int] {
         Dictionary(grouping: bidData, by: { $0.status ?? .pending }).mapValues { $0.count }
@@ -27,7 +49,7 @@ struct BidAnalyzingView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
                     HStack{
                         VStack(alignment:.leading){
@@ -48,22 +70,39 @@ struct BidAnalyzingView: View {
                     
                         
 
-                    Chart {
-                        ForEach(BidStatus.allCases, id: \.self) { status in
-                            if let count = statusCounts[status] {
-                                SectorMark(
-                                    angle: .value("Bids", count),
-                                    innerRadius: .ratio(0.6),
-                                    angularInset: 1
-                                )
-                                .foregroundStyle(by: .value("Status", status.rawValue))
-                                .cornerRadius(4)
-                            }
+                    // Chart
+                    ZStack {
+                        Chart {
+                            SectorMark(angle: .value("Pending", pending), innerRadius: .ratio(0.6))
+                                .foregroundStyle(Color.blue)
+                            SectorMark(angle: .value("Accepted", accepted), innerRadius: .ratio(0.6))
+                                .foregroundStyle(Color.red)
+                            SectorMark(angle: .value("Rejected", rejected), innerRadius: .ratio(0.6))
+                                .foregroundStyle(Color.gray)
+                        }
+                        .frame(height: 200)
+
+                        Text("\(acceptedPercentage)%")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                    }
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack {
+                            Circle().fill(Color.blue).frame(width: 10, height: 10)
+                            Text("Successful Bids - \(accepted)")
+                        }
+                        HStack {
+                            Circle().fill(Color.red).frame(width: 10, height: 10)
+                            Text("Unsuccessful Bids - \(rejected)")
+                        }
+                        HStack {
+                            Circle().fill(Color.gray).frame(width: 10, height: 10)
+                            Text("Pending Bids - \(pending)")
                         }
                     }
-                    .frame(height: 250)
-                    .padding(.horizontal)
-                    .chartLegend(position: .bottom)
+                    .font(.subheadline)
 
                     Divider()
 

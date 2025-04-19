@@ -22,6 +22,7 @@ struct HomeView: View {
             ScrollView {
                 VStack {
                     HStack(alignment: .center) {
+    
                         VStack(alignment: .leading) {
                             Text("Good Morning")
                                 .font(.system(size: 12 , weight: .regular))
@@ -38,6 +39,18 @@ struct HomeView: View {
                 }
                 .padding()
                 
+                HStack {
+                   Image("cover")
+                        .resizable()
+                        .scaledToFill()
+                }
+                
+                .frame(maxWidth: .infinity)
+                .cornerRadius(20)
+                .padding(.horizontal)
+
+
+                
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(cards) { card in
                         if card.title == "Place A Bid" {
@@ -47,6 +60,16 @@ struct HomeView: View {
                             .buttonStyle(PlainButtonStyle())
                         } else if card.title == "Bid Analysis" {
                             NavigationLink(destination: BidAnalyzingView()) {
+                                CardView(card: card)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        } else if card.title == "Place A Harvest" {
+                            NavigationLink(destination: PlaceHarvestView()) {
+                                CardView(card: card)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        } else if card.title == "Harvest Analysis" {
+                            NavigationLink(destination: HarvestAnalyzingView()) {
                                 CardView(card: card)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -139,6 +162,66 @@ struct CardView: View {
         .padding(.horizontal,2)
     }
 }
+
+struct WeatherCardView : View {
+    @StateObject private var viewModel = WeatherViewModel()
+
+    var body: some View {
+
+                    VStack(spacing: 20) {
+                        VStack(spacing: 8) {
+                            TextField("Search location", text: $viewModel.searchQuery)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.horizontal)
+                                .onChange(of: viewModel.searchQuery) { _ in
+                                    viewModel.updateSearchResults()
+                                }
+
+                            List(viewModel.searchResults, id: \.self) { result in
+                                Button(action: {
+                                    viewModel.selectLocation(completion: result)
+                                }) {
+                                    Text(result.title + ", " + result.subtitle)
+                                }
+                            }
+                            .frame(height: viewModel.searchResults.isEmpty ? 0 : 200)
+                        }
+
+                        if let weather = viewModel.weather {
+                            VStack(spacing: 12) {
+                                Text(viewModel.locationName)
+                                    .font(.title)
+                                    .bold()
+
+                                Text("\(Int(weather.currentWeather.temperature.value))°\(weather.currentWeather.temperature.unit.symbol)")
+                                    .font(.system(size: 64, weight: .bold))
+
+                                Text(weather.currentWeather.condition.description)
+                                    .font(.headline)
+
+                                HStack {
+                                    Text("Wind: \(Int(weather.currentWeather.wind.speed.value)) \(weather.currentWeather.wind.speed.unit.symbol)")
+                                    Spacer()
+                                    Text("Humidity: \(Int(weather.currentWeather.humidity * 100))%")
+                                }
+                                .padding(.horizontal)
+                                .font(.subheadline)
+                            }
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(16)
+                            .padding(.horizontal)
+                        } else {
+                            ProgressView("Loading weather...")
+                                .padding()
+                        }
+
+                        Spacer()
+                    }
+                    .navigationTitle("Weather")
+                }
+            }
+
 
 #Preview {
     HomeView()

@@ -19,11 +19,6 @@ struct SignInView: View {
             ZStack{
                 Spacer()
                 
-                NavigationLink(destination: ContentView(), isActive: $navigateHome) {
-                    EmptyView()
-                }
-                .hidden()
-                
                 NavigationLink(destination: RegisterView(), isActive: $navigateRegister) {
                     EmptyView()
                 }
@@ -78,9 +73,7 @@ struct SignInView: View {
                         )
                         .onTapGesture {
                             loginAction(true)
-                            
-                            navigateHome = true
-                            userId =  ""
+                            userId = ""
                             password = ""
                         }
                         

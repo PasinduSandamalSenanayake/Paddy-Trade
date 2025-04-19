@@ -20,7 +20,9 @@ struct RegisterView: View {
                 
                     .hidden()
                 
-                NavigationLink(destination: RegisterView(), isActive: $navigateSign) {
+                NavigationLink(destination: SignInView(loginAction: {_ in 
+                    
+                }), isActive: $navigateSign) {
                     EmptyView()
                 }
                 .hidden()
