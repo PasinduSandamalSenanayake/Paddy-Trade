@@ -23,7 +23,7 @@ struct PlaceHarvestView: View {
                         .font(.caption)
                         .foregroundColor(.red)
                         .padding(.horizontal)
-
+                    
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Type of the Paddy")
                             .fontWeight(.semibold)
@@ -46,12 +46,12 @@ struct PlaceHarvestView: View {
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.2)))
                         }
                     }
-
+                    
                     HStack(spacing: 16) {
                         InputBox(title: "Total Paddy Yield", value: "\(totalYield) kg")
                         InputBox(title: "Base Price Per KG", value: "Rs \(basePrice)")
                     }
-
+                    
                     HStack {
                         Text("Add an Image")
                             .fontWeight(.semibold)
@@ -62,7 +62,7 @@ struct PlaceHarvestView: View {
                                 .font(.title2)
                         }
                     }
-
+                    
                     HStack {
                         Label("Location", systemImage: "location.fill")
                             .padding()
@@ -72,7 +72,7 @@ struct PlaceHarvestView: View {
                     .onTapGesture {
                         
                     }
-
+                    
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Description")
                             .fontWeight(.semibold)
@@ -82,7 +82,7 @@ struct PlaceHarvestView: View {
                             .background(Color(.systemGreen).opacity(0.1))
                             .cornerRadius(12)
                     }
-
+                    
                     Button(action: {
                         
                     }) {
@@ -95,28 +95,26 @@ struct PlaceHarvestView: View {
                             .font(.headline)
                     }
                     .padding(.top)
-
+                    
                 }
                 .padding()
             }
-            .navigationTitle("Place Harvest")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading: Button(action: {
-                self.presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(Color.splashGreen)
-            })
-            
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "chevron.left")
+                .foregroundColor(Color.splashGreen)
+        })
     }
 }
 
 struct InputBox: View {
     var title: String
     var value: String
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)

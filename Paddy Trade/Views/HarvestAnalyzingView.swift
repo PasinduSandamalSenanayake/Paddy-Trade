@@ -13,20 +13,20 @@ struct HarvestAnalyzingView: View {
     let unsuccessful = 18
     let pending = 11
     @Environment(\.presentationMode) var presentationMode
-
+    
     var total: Int { successful + unsuccessful + pending }
     var successRate: Int {
         guard total > 0 else { return 0 }
         return Int((Double(successful) / Double(total)) * 100)
     }
-
+    
     let bids: [HarvestBid] = [
         HarvestBid(name: "Mr. Nimal Perera", rate: 35, price: 122, date: "2025/03/10"),
         HarvestBid(name: "Ms. Sanduni Jayasuriya", rate: 38, price: 130, date: "2025/03/12"),
         HarvestBid(name: "Mr. Amal Rajapaksha", rate: 37, price: 125, date: "2025/03/14"),
         HarvestBid(name: "Mrs. Tharaka Silva", rate: 34, price: 129, date: "2025/03/16")
     ]
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -50,13 +50,13 @@ struct HarvestAnalyzingView: View {
                                 .foregroundStyle(Color.gray)
                         }
                         .frame(height: 200)
-
+                        
                         Text("\(successRate)%")
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.blue)
                     }
-
+                    
                     VStack(alignment: .leading, spacing: 5) {
                         HStack {
                             Circle().fill(Color.blue).frame(width: 10, height: 10)
@@ -72,7 +72,7 @@ struct HarvestAnalyzingView: View {
                         }
                     }
                     .font(.subheadline)
-
+                    
                     Divider()
                     
                     Text("Bids For Harvest")
@@ -92,8 +92,9 @@ struct HarvestAnalyzingView: View {
         }) {
             Image(systemName: "chevron.left")
                 .foregroundColor(.splashGreen)
-        })    }
-
+        })
+    }
+    
     
 }
 
@@ -101,7 +102,7 @@ struct HarvestAnalyzingView: View {
 
 struct HarvestBidCard: View {
     let bid: HarvestBid
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -114,11 +115,11 @@ struct HarvestBidCard: View {
                 Text("/ per kg")
                     .font(.caption)
             }
-
+            
             Text("Successful Rate - \(bid.rate)%")
                 .foregroundColor(.blue)
                 .font(.subheadline)
-
+            
             HStack {
                 Image(systemName: "calendar")
                 Text(bid.date)

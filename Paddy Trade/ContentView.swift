@@ -10,6 +10,7 @@ import LocalAuthentication
 
 struct ContentView: View {
     @State private var isAuthenticated = false
+    @State private var showWelcomeScreen = true
     @State private var showLogin = false
     @StateObject private var locationManager = LocationManager()
 
@@ -20,7 +21,12 @@ struct ContentView: View {
 
     @ViewBuilder
     private var content: some View {
-        if isAuthenticated {
+        if showWelcomeScreen {
+            WelcomeView {
+                showWelcomeScreen = false
+                authenticateUser()
+            }
+        } else if isAuthenticated {
             HomeView()
         } else if showLogin {
             SignInView(loginAction: { success in
@@ -30,10 +36,8 @@ struct ContentView: View {
             })
         } else {
             SplashView()
-                .onAppear(perform: authenticateUser)
         }
     }
-
 
     func authenticateUser() {
         let context = LAContext()
