@@ -159,6 +159,6 @@ struct BidDetailView: View {
 
 
 
-#Preview {
-    BidDetailView(bid: .init(imageName: "paddy_image", name: "Samba Paddy", location: "Anuradhapura", price: 125, totalWeight: 1545, date: "2025/03/15", latitude: 8.3114, longitude: 80.4037))
-}
+//#Preview {
+//    BidDetailView(bid: .init(from: Fireb, imageName: "paddy_image", name: "Samba Paddy", location: "Anuradhapura", price: 125, totalWeight: 1545, date: "2025/03/15", latitude: 8.3114, longitude: 80.4037))
+//}

@@ -8,26 +8,23 @@
 import SwiftUI
 import Charts
 
+import SwiftUI
+import Charts
+
 struct BidAnalyzingView: View {
-    let bidData: [Bid] = [
-        Bid(imageName: "paddy_image", name: "Samba", location: "Thalawa", price: 125, totalWeight: 1545, date: "2025/03/15", latitude: 8.1234, longitude: 80.1234, status: .accepted),
-        Bid(imageName: "paddy_image", name: "Nadu", location: "Kekirawa", price: 118, totalWeight: 1000, date: "2025/03/10", latitude: 8.2345, longitude: 80.2345, status: .rejected),
-        Bid(imageName: "paddy_image", name: "Samba", location: "Anuradhapura", price: 127, totalWeight: 1100, date: "2025/03/13", latitude: 8.3456, longitude: 80.3456, status: .pending),
-        Bid(imageName: "paddy_image", name: "Samba", location: "Thalawa", price: 125, totalWeight: 1545, date: "2025/03/15", latitude: 8.1234, longitude: 80.1234, status: .accepted),
-        Bid(imageName: "paddy_image", name: "Nadu", location: "Kekirawa", price: 118, totalWeight: 1000, date: "2025/03/10", latitude: 8.2345, longitude: 80.2345, status: .rejected),
-        Bid(imageName: "paddy_image", name: "Samba", location: "Anuradhapura", price: 127, totalWeight: 1100, date: "2025/03/13", latitude: 8.3456, longitude: 80.3456, status: .pending)
-    ]
-    
+    @StateObject private var viewModel = BidDetailViewModel()
+    @Environment(\.presentationMode) var presentationMode
+
     var pending: Int {
-        bidData.filter { $0.status == .pending }.count
+        viewModel.bids.filter { $0.status == .pending }.count
     }
 
     var accepted: Int {
-        bidData.filter { $0.status == .accepted }.count
+        viewModel.bids.filter { $0.status == .accepted }.count
     }
 
     var rejected: Int {
-        bidData.filter { $0.status == .rejected }.count
+        viewModel.bids.filter { $0.status == .rejected }.count
     }
 
     var total: Int {
@@ -39,38 +36,25 @@ struct BidAnalyzingView: View {
         return Int((Double(accepted) / Double(total)) * 100)
     }
 
-
-    var statusCounts: [BidStatus: Int] {
-        Dictionary(grouping: bidData, by: { $0.status ?? .pending }).mapValues { $0.count }
-    }
-    
-    @Environment(\.presentationMode) var presentationMode
-
-
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-                    HStack{
-                        VStack(alignment:.leading){
-                            HStack(spacing: 2){
+                    HStack {
+                        VStack(alignment: .leading) {
+                            HStack(spacing: 2) {
                                 Text("Bid")
                                     .foregroundColor(.black)
                                     .opacity(0.8)
                                 Text("Analysis")
                                     .foregroundColor(.splashGreen)
-
                             }
-                                .font(.system(size: 30, weight: .bold))
+                            .font(.system(size: 30, weight: .bold))
                             Text("Bid Status Overview")
-
                         }
                         Spacer()
                     }
-                    
-                        
 
-                    // Chart
                     ZStack {
                         Chart {
                             SectorMark(angle: .value("Pending", pending), innerRadius: .ratio(0.6))
@@ -110,21 +94,35 @@ struct BidAnalyzingView: View {
                         .font(.headline)
                         .padding(.top)
 
-                    ForEach(bidData) { bid in
-                        BidHistoryCardView(bid: bid)
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else if let error = viewModel.error {
+                        Text("Error: \(error)").foregroundColor(.red)
+                    } else if viewModel.bids.isEmpty {
+                        Text("No bids found.")
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(viewModel.bids) { bid in
+                            BidHistoryCardView(bid: bid)
+                        }
                     }
                 }
                 .padding()
             }
+            .onAppear {
+                viewModel.fetchUserBids()
+            }
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {
-            self.presentationMode.wrappedValue.dismiss()
+            presentationMode.wrappedValue.dismiss()
         }) {
             Image(systemName: "chevron.left")
                 .foregroundColor(.splashGreen)
-        })    }
+        })
+    }
 }
+
 
 
 

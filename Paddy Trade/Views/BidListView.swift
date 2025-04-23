@@ -6,50 +6,44 @@
 //
 
 import SwiftUI
-
+import FirebaseAuth
 
 struct BidListView: View {
-    
-    
     
     @State private var searchString: String = ""
     @State private var showFilterSheet = false
     @State private var filters = FilterData()
     @Environment(\.presentationMode) var presentationMode
     
-    let bidData: [Bid] = [
-            Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Anuradhapura", price: 125, totalWeight: 1545, date: "2025/03/15", latitude: 8.3114, longitude: 80.4037),
-            Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Polonnaruwa", price: 127, totalWeight: 1578, date: "2025/03/10", latitude: 7.9403, longitude: 81.0188),
-            Bid(imageName: "paddy_image", name: "Nadu Paddy", location: "Ampara", price: 118, totalWeight: 1255, date: "2025/03/11", latitude: 7.2944, longitude: 81.6828),
-            Bid(imageName: "paddy_image", name: "Samba Paddy", location: "Kandy", price: 129, totalWeight: 1788, date: "2025/03/17", latitude: 7.2906, longitude: 80.6337)
-        
-    ]
-
+    @StateObject private var viewModel = BidDetailViewModel()
+    
     var body: some View {
-            VStack(spacing: 0) {
-                HStack{
-                    Text("Place the bid")
-                        .font(.system(size: 22))
-                        .fontWeight(.bold)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.top,10)
-                SearchBar(searchString: $searchString, onFilterTapped: {
-                    showFilterSheet = true
-                })
-                ScrollView {
-                    VStack(spacing: 12) {
-                        ForEach(filteredBids) { bid in
-                            NavigationLink(destination: BidDetailView(bid: bid)) {
-                                BidCardView(bid: bid)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
-                    .padding()
-                }
+        VStack(spacing: 0) {
+            HStack {
+                Text("Place the bid")
+                    .font(.system(size: 22))
+                    .fontWeight(.bold)
+                Spacer()
             }
+            .padding(.horizontal)
+            .padding(.top, 10)
+            
+            SearchBar(searchString: $searchString, onFilterTapped: {
+                showFilterSheet = true
+            })
+            
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(filteredBids) { bid in
+                        NavigationLink(destination: BidDetailView(bid: bid)) {
+                            BidCardView(bid: bid)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding()
+            }
+        }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {
             self.presentationMode.wrappedValue.dismiss()
@@ -57,27 +51,32 @@ struct BidListView: View {
             Image(systemName: "chevron.left")
                 .foregroundColor(Color.splashGreen)
         })
-        
+        .onAppear {
+            viewModel.fetchAllOtherBids()
+        }
         .sheet(isPresented: $showFilterSheet) {
-            FilterView(filters: $filters, allLocations: Array(Set(bidData.map { $0.location })))
+            FilterView(filters: $filters, allLocations: Array(Set(viewModel.bids.map { $0.location })))
         }
     }
     
     var filteredBids: [Bid] {
-        return bidData.filter { bid in
-            let matchesSearch = searchString.isEmpty || bid.name.localizedCaseInsensitiveContains(searchString) || bid.location.localizedCaseInsensitiveContains(searchString)
+        viewModel.bids.filter { bid in
+            let matchesSearch = searchString.isEmpty ||
+                bid.name.localizedCaseInsensitiveContains(searchString) ||
+                bid.location.localizedCaseInsensitiveContains(searchString)
             
             let matchesLocation = filters.selectedLocations.isEmpty || filters.selectedLocations.contains(bid.location)
+            
             let matchesPrice = (filters.minPrice == nil || bid.price >= Int(filters.minPrice!)) &&
-            (filters.maxPrice == nil || bid.price <= Int(filters.maxPrice!))
+                               (filters.maxPrice == nil || bid.price <= Int(filters.maxPrice!))
+            
             let matchesWeight = filters.minWeight == nil || Double(bid.totalWeight) >= filters.minWeight!
             
             return matchesSearch && matchesLocation && matchesPrice && matchesWeight
         }
     }
-       
-    
 }
+
 
 struct SearchBar: View {
     @Binding var searchString: String

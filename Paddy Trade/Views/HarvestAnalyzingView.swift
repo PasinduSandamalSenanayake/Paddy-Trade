@@ -9,30 +9,23 @@ import SwiftUI
 import Charts
 
 struct HarvestAnalyzingView: View {
-    let successful = 21
-    let unsuccessful = 18
-    let pending = 11
-    @Environment(\.presentationMode) var presentationMode
+    @StateObject var viewModel = HarvestViewModel()
     
-    var total: Int { successful + unsuccessful + pending }
-    var successRate: Int {
-        guard total > 0 else { return 0 }
-        return Int((Double(successful) / Double(total)) * 100)
+    var total: Int {
+        viewModel.successfulCount + viewModel.unsuccessfulCount + viewModel.pendingCount
     }
     
-        let bids: [Harvest] = [
-            Harvest(name: "Mr. Nimal Perera", rate: 35, price: 122, date: "2025/03/10", location: nil, description: "", status: .successful),
-            Harvest(name: "Ms. Sanduni Jayasuriya", rate: 38, price: 130, date: "2025/03/12", location: nil, description: "", status: .pending),
-            Harvest(name: "Mr. Amal Rajapaksha", rate: 37, price: 125, date: "2025/03/14", location: nil, description: "", status: .unsuccessful),
-            Harvest(name: "Mrs. Tharaka Silva", rate: 34, price: 129, date: "2025/03/16", location: nil, description: "", status: .successful)
-        ]
+    var successRate: Int {
+        guard total > 0 else { return 0 }
+        return Int((Double(viewModel.successfulCount) / Double(total)) * 100)
+    }
 
-    
+    @Environment(\.presentationMode) var presentationMode
+
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    
                     HStack {
                         Text("Harvest")
                             .foregroundColor(.black)
@@ -43,11 +36,11 @@ struct HarvestAnalyzingView: View {
                     
                     ZStack {
                         Chart {
-                            SectorMark(angle: .value("Successful", successful), innerRadius: .ratio(0.6))
+                            SectorMark(angle: .value("Successful", viewModel.successfulCount), innerRadius: .ratio(0.6))
                                 .foregroundStyle(Color.blue)
-                            SectorMark(angle: .value("Unsuccessful", unsuccessful), innerRadius: .ratio(0.6))
+                            SectorMark(angle: .value("Unsuccessful", viewModel.unsuccessfulCount), innerRadius: .ratio(0.6))
                                 .foregroundStyle(Color.red)
-                            SectorMark(angle: .value("Pending", pending), innerRadius: .ratio(0.6))
+                            SectorMark(angle: .value("Pending", viewModel.pendingCount), innerRadius: .ratio(0.6))
                                 .foregroundStyle(Color.gray)
                         }
                         .frame(height: 200)
@@ -61,15 +54,15 @@ struct HarvestAnalyzingView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         HStack {
                             Circle().fill(Color.blue).frame(width: 10, height: 10)
-                            Text("Successful Harvests - \(successful)")
+                            Text("Successful Harvests - \(viewModel.successfulCount)")
                         }
                         HStack {
                             Circle().fill(Color.red).frame(width: 10, height: 10)
-                            Text("Unsuccessful Harvests - \(unsuccessful)")
+                            Text("Unsuccessful Harvests - \(viewModel.unsuccessfulCount)")
                         }
                         HStack {
                             Circle().fill(Color.gray).frame(width: 10, height: 10)
-                            Text("Pending Harvests - \(pending)")
+                            Text("Pending Harvests - \(viewModel.pendingCount)")
                         }
                     }
                     .font(.subheadline)
@@ -79,13 +72,15 @@ struct HarvestAnalyzingView: View {
                     Text("Bids For Harvest")
                         .font(.headline)
                     
-                    ForEach(bids) { bid in
-                        HarvestBidCard(bid: bid)
+                    ForEach(viewModel.harvests) { bid in
+                        HarvestBidCard(bid: bid, viewModel: viewModel)
                     }
                 }
                 .padding()
             }
-            
+        }
+        .onAppear {
+            viewModel.fetchHarvests() // Fetch data when the view appears
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {
@@ -95,15 +90,13 @@ struct HarvestAnalyzingView: View {
                 .foregroundColor(.splashGreen)
         })
     }
-    
-    
 }
-
 
 
 struct HarvestBidCard: View {
     let bid: Harvest
-    
+    @ObservedObject var viewModel: HarvestViewModel
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -127,6 +120,7 @@ struct HarvestBidCard: View {
                     .font(.caption)
                 Spacer()
                 Button("Accept") {
+                    viewModel.acceptHarvest(bid)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -140,6 +134,7 @@ struct HarvestBidCard: View {
         .cornerRadius(12)
     }
 }
+
 
 
 #Preview{

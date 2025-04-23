@@ -30,11 +30,14 @@ struct HomeView: View {
                                 .font(.system(size: 22 , weight: .semibold))
                         }
                         Spacer()
-                        Image(systemName: "bell.fill")
-                            .fontWeight(.medium)
-                            .font(.system(size: 25))
-                            .padding(.top, 3)
-                            .foregroundColor(.splashGreen)
+                        NavigationLink(destination: NotificationListView()) {
+                            Image(systemName: "bell.fill")
+                                .fontWeight(.medium)
+                                .font(.system(size: 25))
+                                .padding(.top, 3)
+                                .foregroundColor(.splashGreen)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding()
@@ -50,7 +53,7 @@ struct HomeView: View {
                 .padding(.horizontal)
 
                 
-                WeatherCardView()
+                //WeatherCardView()
 
                 
                 LazyVGrid(columns: columns, spacing: 20) {

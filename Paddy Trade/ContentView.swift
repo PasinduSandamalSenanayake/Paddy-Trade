@@ -28,6 +28,9 @@ struct ContentView: View {
             }
         } else if isAuthenticated {
             HomeView()
+                .onAppear {
+                    SampleDataManager.shared.addSampleBidsIfNeeded()
+                }
         } else if showLogin {
             SignInView()
         } else {
