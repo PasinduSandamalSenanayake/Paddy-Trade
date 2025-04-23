@@ -6,12 +6,14 @@
 //
 import SwiftUI
 import UserNotifications
+import FirebaseCore
 
 @main
 struct Paddy_TradeApp: App {
     
     init() {
         // Request notification permission when the app starts
+        FirebaseApp.configure()
         NotificationManager.shared.requestAuthorization()
         UNUserNotificationCenter.current().delegate = NotificationManager.shared as! any UNUserNotificationCenterDelegate
     }

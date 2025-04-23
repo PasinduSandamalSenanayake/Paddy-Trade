@@ -6,31 +6,32 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct RegisterView: View {
-    @State private var userId : String = ""
-    @State private var password : String = ""
-    @State private var navigateSign : Bool =  false
+    @State private var email: String = ""
+    @State private var name: String = ""
+    @State private var phone: String = ""
+    @State private var password: String = ""
+    @State private var navigateSignIn: Bool = false
+    @State private var errorMessage: IdentifiableString?
     
     var body: some View {
-        NavigationStack{
-            ZStack{
+        NavigationStack {
+            ZStack {
                 Spacer()
                 
-                
-                    .hidden()
-                
-                NavigationLink(destination: SignInView(loginAction: {_ in 
-                    
-                }), isActive: $navigateSign) {
+                NavigationLink(destination: SignInView(), isActive: $navigateSignIn) {
                     EmptyView()
                 }
                 .hidden()
                 
-                VStack{
+                VStack {
                     Spacer()
-                    VStack{
-                        HStack(spacing:0){
+                    
+                    VStack {
+                        HStack(spacing: 0) {
                             Text("Paddy")
                                 .font(.system(size: 40, weight: .semibold))
                                 .foregroundColor(.white)
@@ -43,31 +44,40 @@ struct RegisterView: View {
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white)
                             .opacity(0.9)
-                        
-                        
                     }
                     .padding(.top)
-                    VStack{
-                        TextField("Username or Email", text: $password)
+                    
+                    VStack(spacing: 15) {
+                        
+                        TextField("Name", text: $name)
+                            .autocapitalization(.none)
                             .foregroundColor(.black)
                             .padding()
                             .background(Color.white)
                             .cornerRadius(10)
                         
-                        TextField("Phone", text: $password)
+                        TextField("Email", text: $email)
+                            .autocapitalization(.none)
+                            .keyboardType(.emailAddress)
                             .foregroundColor(.black)
                             .padding()
                             .background(Color.white)
                             .cornerRadius(10)
                         
-                        
-                        SecureField("Password", text: $userId)
+                        TextField("Phone", text: $phone)
+                            .keyboardType(.phonePad)
                             .foregroundColor(.black)
                             .padding()
                             .background(Color.white)
                             .cornerRadius(10)
                         
-                        HStack{
+                        SecureField("Password", text: $password)
+                            .foregroundColor(.black)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(10)
+                        
+                        HStack {
                             Spacer()
                             Text("Register Now")
                                 .foregroundColor(.white)
@@ -81,15 +91,12 @@ struct RegisterView: View {
                                 .stroke(Color.white, lineWidth: 2)
                         )
                         .onTapGesture {
-                            navigateSign = true
-                            userId =  ""
-                            password = ""
+                            register()
                         }
                         
-                        
-                        HStack{
+                        HStack {
                             Spacer()
-                            Text("Do you hace an account?")
+                            Text("Already have an account?")
                                 .foregroundColor(.white)
                                 .fontWeight(.medium)
                                 .font(.system(size: 16))
@@ -100,33 +107,51 @@ struct RegisterView: View {
                                 .fontWeight(.semibold)
                                 .font(.system(size: 16))
                                 .onTapGesture {
-                                    navigateSign = true
+                                    navigateSignIn = true
                                 }
                             Spacer()
                         }
-                        .padding(.top,10)
-                        
-                        
-                        
+                        .padding(.top, 10)
                     }
-                    .padding(.horizontal,25)
+                    .padding(.horizontal, 25)
                     .padding(.top)
                     
-                    
                     Spacer()
-                    
                 }
             }
-            .frame(maxWidth: .infinity , maxHeight: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("SplashGreen"))
             .ignoresSafeArea()
-            
         }
         .navigationBarBackButtonHidden(true)
-        
+        .alert(item: $errorMessage) { message in
+            Alert(title: Text("Error"), message: Text(message.value), dismissButton: .default(Text("OK")))
+        }
     }
     
-    
+    private func register() {
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let error = error {
+                errorMessage = IdentifiableString(error.localizedDescription)
+            } else if let user = result?.user {
+                let db = Firestore.firestore()
+                db.collection("users").document(user.uid).setData([
+                    "email": email,
+                    "phone": phone,
+                    "name": name
+                ]) { dbError in
+                    if let dbError = dbError {
+                        errorMessage = IdentifiableString(dbError.localizedDescription)
+                    } else {
+                        navigateSignIn = true
+                        email = ""
+                        phone = ""
+                        password = ""
+                    }
+                }
+            }
+        }
+    }
 }
 
 

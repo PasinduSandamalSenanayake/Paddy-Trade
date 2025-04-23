@@ -21,6 +21,22 @@ struct Bid: Identifiable {
 
 }
 
+struct FirebaseBid: Codable {
+    var imageName: String
+    var name: String
+    var location: String
+    var price: Int
+    var totalWeight: Int
+    var date: String
+    var latitude: Double
+    var longitude: Double
+    var status: String
+    var userBid: Double
+    var totalPrice: Double
+    var timestamp: Date
+}
+
+
 enum BidStatus: String, CaseIterable {
     case pending = "Pending"
     case accepted = "Accepted"

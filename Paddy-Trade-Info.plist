@@ -2,11 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSUserNotificationUsageDescription</key>
-    <string>We use notifications to keep you updated on Paddy Trade activity.</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to show it on the map.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>We need your location to show it on the map.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We use notifications to keep you updated on Paddy Trade activity.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We use Face ID to securely authenticate you.</string>
 </dict>
 </plist>

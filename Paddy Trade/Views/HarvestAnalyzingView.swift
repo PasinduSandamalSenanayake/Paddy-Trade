@@ -20,12 +20,13 @@ struct HarvestAnalyzingView: View {
         return Int((Double(successful) / Double(total)) * 100)
     }
     
-    let bids: [HarvestBid] = [
-        HarvestBid(name: "Mr. Nimal Perera", rate: 35, price: 122, date: "2025/03/10"),
-        HarvestBid(name: "Ms. Sanduni Jayasuriya", rate: 38, price: 130, date: "2025/03/12"),
-        HarvestBid(name: "Mr. Amal Rajapaksha", rate: 37, price: 125, date: "2025/03/14"),
-        HarvestBid(name: "Mrs. Tharaka Silva", rate: 34, price: 129, date: "2025/03/16")
-    ]
+        let bids: [Harvest] = [
+            Harvest(name: "Mr. Nimal Perera", rate: 35, price: 122, date: "2025/03/10", location: nil, description: "", status: .successful),
+            Harvest(name: "Ms. Sanduni Jayasuriya", rate: 38, price: 130, date: "2025/03/12", location: nil, description: "", status: .pending),
+            Harvest(name: "Mr. Amal Rajapaksha", rate: 37, price: 125, date: "2025/03/14", location: nil, description: "", status: .unsuccessful),
+            Harvest(name: "Mrs. Tharaka Silva", rate: 34, price: 129, date: "2025/03/16", location: nil, description: "", status: .successful)
+        ]
+
     
     var body: some View {
         NavigationView {
@@ -101,7 +102,7 @@ struct HarvestAnalyzingView: View {
 
 
 struct HarvestBidCard: View {
-    let bid: HarvestBid
+    let bid: Harvest
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {

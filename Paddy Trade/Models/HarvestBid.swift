@@ -6,11 +6,21 @@
 //
 
 import Foundation
+import CoreLocation
 
-struct HarvestBid: Identifiable {
+struct Harvest: Identifiable {
     let id = UUID()
-    let name: String
-    let rate: Int
-    let price: Int
-    let date: String
+    let name: String               // e.g. "Mr. Nimal Perera"
+    let rate: Int                 // e.g. success rate or bid rate
+    let price: Int                // per kg
+    let date: String              // for display
+    let location: CLLocationCoordinate2D?  // for map
+    let description: String       // extra info or notes
+    let status: HarvestStatus     // new: status for analysis
+}
+
+enum HarvestStatus: String, Codable {
+    case successful
+    case unsuccessful
+    case pending
 }

@@ -29,11 +29,7 @@ struct ContentView: View {
         } else if isAuthenticated {
             HomeView()
         } else if showLogin {
-            SignInView(loginAction: { success in
-                if success {
-                    isAuthenticated = true
-                }
-            })
+            SignInView()
         } else {
             SplashView()
         }

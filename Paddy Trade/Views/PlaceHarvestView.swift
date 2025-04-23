@@ -6,13 +6,19 @@
 //
 
 import SwiftUI
+import CoreLocation
+import MapKit
 
 struct PlaceHarvestView: View {
+    
     @Environment(\.presentationMode) var presentationMode
     @State private var paddyType = "Samba Paddy Yield"
-    @State private var totalYield = "1547"
-    @State private var basePrice = "127.00"
+    @State private var totalYield = "1000"
+    @State private var basePrice = "120"
     @State private var description = "Welcome to PaddyTrade, your direct gateway to a seamless agricultural trading experience! Designed for simplicity and security."
+    @State private var showMap = false
+    @State private var selectedLocation: CLLocationCoordinate2D? = nil
+
     
     var body: some View {
         NavigationView {
@@ -48,8 +54,25 @@ struct PlaceHarvestView: View {
                     }
                     
                     HStack(spacing: 16) {
-                        InputBox(title: "Total Paddy Yield", value: "\(totalYield) kg")
-                        InputBox(title: "Base Price Per KG", value: "Rs \(basePrice)")
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Total Paddy Yield")
+                                .fontWeight(.semibold)
+                            TextField("Enter yield", text: $totalYield)
+                                .keyboardType(.numberPad)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .cornerRadius(12)
+                        }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Base Price(Rs)")
+                                .fontWeight(.semibold)
+                            TextField("Enter price", text: $basePrice)
+                                .keyboardType(.decimalPad)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .cornerRadius(12)
+                        }
                     }
                     
                     HStack {
@@ -64,14 +87,18 @@ struct PlaceHarvestView: View {
                     }
                     
                     HStack {
-                        Label("Location", systemImage: "location.fill")
+                        Label(selectedLocation != nil ? "Location Selected" : "Pick Location", systemImage: "location.fill")
                             .padding()
                             .background(Color.yellow.opacity(0.3))
                             .cornerRadius(12)
                     }
                     .onTapGesture {
-                        
+                        showMap = true
                     }
+                    .sheet(isPresented: $showMap) {
+                        MapPickerView(selectedLocation: $selectedLocation)
+                    }
+
                     
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Description")
@@ -128,6 +155,57 @@ struct InputBox: View {
         }
     }
 }
+
+
+struct MapPickerView: View {
+    @Binding var selectedLocation: CLLocationCoordinate2D?
+    @Environment(\.dismiss) var dismiss
+
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718),
+        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    )
+    
+    struct IdentifiableCoordinate: Identifiable {
+        let id = UUID()
+        let coordinate: CLLocationCoordinate2D
+    }
+
+    
+    var body: some View {
+        VStack {
+            Map(
+                coordinateRegion: $region,
+                interactionModes: .all,
+                showsUserLocation: true,
+                annotationItems: selectedLocation.map { [IdentifiableCoordinate(coordinate: $0)] } ?? []
+            ) { item in
+                MapPin(coordinate: item.coordinate)
+            }
+            .onTapGesture {
+                selectedLocation = region.center
+            }
+            
+            Button {
+                dismiss()
+            } label: {
+                HStack{
+                    Spacer()
+                    Text("Confirm Location")
+                    Spacer()
+
+                }
+            }
+            .padding(.vertical,10)
+            .background(Color.splashGreen)
+            .foregroundColor(.white)
+            .cornerRadius(12)
+            .padding(20)
+        }
+    }
+}
+
+
 
 struct PlaceHarvestView_Previews: PreviewProvider {
     static var previews: some View {

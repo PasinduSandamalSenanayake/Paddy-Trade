@@ -13,10 +13,12 @@ import MapKit
 
 struct BidDetailView: View {
     let bid: Bid
+    @StateObject private var viewModel = BidDetailViewModel()
     @State private var userBid: String = ""
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedBidLocation: Bid? = nil
     @State private var showMap = false
+    @State private var showEmptyBidAlert = false
     var totalPrice: Double {
         (Double(userBid) ?? 0) * Double(bid.totalWeight)
     }
@@ -73,37 +75,67 @@ struct BidDetailView: View {
                             .padding(.bottom,15)
                         
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("Place a Bid per kg")
-                            TextField("Enter your bid", text: $userBid)
+                            Text("Place a Bid (Per kg)")
+                            TextField("Enter your bid", text: $viewModel.userBid)
                                 .keyboardType(.decimalPad)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(8)
                             
-                            Text("Calculate the total cost")
-                            Text("Rs \(String(format: "%.2f", totalPrice))")
-                                .font(.title3)
+                            Text("Total cost")
+                                .padding(.top,10)
+                            let userBidValue = Double(viewModel.userBid) ?? 0
+                            Text("Rs \(String(format: "%.2f", userBidValue * Double(bid.totalWeight)))")
+                                .font(.title2)
                                 .foregroundColor(.black)
+                                .fontWeight(.bold)
                         }
                         
                         Button {
-                            self.presentationMode.wrappedValue.dismiss()
-                            NotificationManager.shared.requestAuthorization()
-                            NotificationManager.shared.scheduleNotification(
-                                title: "Bid Place Sucess!",
-                                body: "You have placed bid sucessfully",
-                                afterSeconds: 1
-                            )
+                            guard
+                                let userBidDouble = Double(viewModel.userBid.trimmingCharacters(in: .whitespaces)),
+                                userBidDouble > Double(bid.price)
+                            else {
+                                showEmptyBidAlert = true
+                                return
+                            }
+
+                            
+                            
+                            viewModel.placeBid(for: bid) { success in
+                                if success {
+                                    presentationMode.wrappedValue.dismiss()
+                                    NotificationManager.shared.requestAuthorization()
+                                    NotificationManager.shared.scheduleNotification(
+                                        title: "Bid Placed!",
+                                        body: "Bid #1232 submitted successfully. Please Contact 071237323",
+                                        afterSeconds: 1
+                                    )
+                                }
+                            }
                         } label: {
-                            Text("Place The Bid")
-                                .font(.headline)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.splashGreen)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
+                            if viewModel.isSubmitting {
+                                ProgressView()
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.gray)
+                                    .cornerRadius(10)
+                            } else {
+                                Text("Place The Bid")
+                                    .font(.headline)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.splashGreen)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
+                            }
                         }
-                        
+                        .alert(isPresented: $showEmptyBidAlert) {
+                            Alert(title: Text("Missing Bid"),
+                                  message: Text("Please enter a bid value before placing your bid."),
+                                  dismissButton: .default(Text("OK")))
+                        }
+
                         
                         
                         .padding(.top, 10)

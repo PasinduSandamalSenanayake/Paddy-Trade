@@ -18,7 +18,7 @@ struct HomeView: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack {
                     HStack(alignment: .center) {
@@ -49,6 +49,8 @@ struct HomeView: View {
                 .cornerRadius(20)
                 .padding(.horizontal)
 
+                
+                WeatherCardView()
 
                 
                 LazyVGrid(columns: columns, spacing: 20) {
@@ -80,29 +82,10 @@ struct HomeView: View {
                 }
                 .padding()
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
-            .onAppear {
-                NotificationManager.shared.requestAuthorization()
-                // For Test
-//                NotificationManager.shared.scheduleNotification(
-//                    title: "Reminder",
-//                    body: "Check your Paddy Trade stats!",
-//                    afterSeconds: 10
-//                )
-//
-//                NotificationManager.shared.scheduleNotification(
-//                    title: "Reminder 2",
-//                    body: "Check your Paddy Trade stats!",
-//                    afterSeconds: 20
-//                )
-//                
-//                NotificationManager.shared.scheduleNotification(
-//                    title: "Reminder 3",
-//                    body: "Check your Paddy Trade stats!",
-//                    afterSeconds: 30
-//                )
+            
             }
+        .onAppear {
+            NotificationManager.shared.requestAuthorization()
         }
     }
 }

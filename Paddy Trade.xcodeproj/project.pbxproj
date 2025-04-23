@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E74F37072DB858FE00080779 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E74F37062DB858FE00080779 /* FirebaseAuth */; };
+		E74F37092DB858FE00080779 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = E74F37082DB858FE00080779 /* FirebaseAuthCombine-Community */; };
+		E74F370B2DB858FE00080779 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E74F370A2DB858FE00080779 /* FirebaseCore */; };
+		E74F370D2DB858FE00080779 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = E74F370C2DB858FE00080779 /* FirebaseDatabase */; };
+		E74F370F2DB858FE00080779 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E74F370E2DB858FE00080779 /* FirebaseFirestore */; };
+		E74F37112DB858FE00080779 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = E74F37102DB858FE00080779 /* FirebaseFirestoreCombine-Community */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E75C0A442DAE2E4300557879 /* Paddy Trade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Paddy Trade.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +32,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E74F37072DB858FE00080779 /* FirebaseAuth in Frameworks */,
+				E74F370B2DB858FE00080779 /* FirebaseCore in Frameworks */,
+				E74F370D2DB858FE00080779 /* FirebaseDatabase in Frameworks */,
+				E74F37112DB858FE00080779 /* FirebaseFirestoreCombine-Community in Frameworks */,
+				E74F370F2DB858FE00080779 /* FirebaseFirestore in Frameworks */,
+				E74F37092DB858FE00080779 /* FirebaseAuthCombine-Community in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +80,12 @@
 			);
 			name = "Paddy Trade";
 			packageProductDependencies = (
+				E74F37062DB858FE00080779 /* FirebaseAuth */,
+				E74F37082DB858FE00080779 /* FirebaseAuthCombine-Community */,
+				E74F370A2DB858FE00080779 /* FirebaseCore */,
+				E74F370C2DB858FE00080779 /* FirebaseDatabase */,
+				E74F370E2DB858FE00080779 /* FirebaseFirestore */,
+				E74F37102DB858FE00080779 /* FirebaseFirestoreCombine-Community */,
 			);
 			productName = "Paddy Trade";
 			productReference = E75C0A442DAE2E4300557879 /* Paddy Trade.app */;
@@ -94,6 +115,9 @@
 			);
 			mainGroup = E75C0A3B2DAE2E4300557879;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E75C0A452DAE2E4300557879 /* Products */;
 			projectDirPath = "";
@@ -248,9 +272,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Paddy Trade/Preview Content\"";
+				DEVELOPMENT_TEAM = 78JZS6XRF4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Paddy-Trade-Info.plist";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to show it on the map.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show it on the map.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -286,9 +313,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Paddy Trade/Preview Content\"";
+				DEVELOPMENT_TEAM = 78JZS6XRF4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Paddy-Trade-Info.plist";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to show it on the map.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show it on the map.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -337,6 +367,50 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E74F37062DB858FE00080779 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		E74F37082DB858FE00080779 /* FirebaseAuthCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAuthCombine-Community";
+		};
+		E74F370A2DB858FE00080779 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		E74F370C2DB858FE00080779 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		E74F370E2DB858FE00080779 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		E74F37102DB858FE00080779 /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E74F37052DB858FE00080779 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E75C0A3C2DAE2E4300557879 /* Project object */;
 }
