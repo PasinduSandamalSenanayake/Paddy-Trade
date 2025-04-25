@@ -224,33 +224,49 @@ struct WeatherCardView: View {
 
 struct FullMapView: View {
     @StateObject private var viewModel = BidDetailViewModel()
-
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718),
         span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
     )
+    
+    @State private var selectedBid: Bid? = nil
 
     var body: some View {
-        Map(coordinateRegion: $region, annotationItems: viewModel.bids) { bid in
-            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: bid.latitude, longitude: bid.longitude)) {
+        ZStack {
+            Map(coordinateRegion: $region, annotationItems: viewModel.bids) { bid in
+                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: bid.latitude, longitude: bid.longitude)) {
+                    VStack {
+                        Button(action: {
+                            selectedBid = bid
+                        }) {
+                            Image(systemName: "mappin.circle.fill")
+                                .foregroundColor(.red)
+                                .font(.title)
+                        }
+                        Text(bid.name)
+                            .font(.caption)
+                    }
+                }
+            }
+            .edgesIgnoringSafeArea(.all)
+            .onAppear {
+                LocationManager.shared.requestCurrentLocation { location in
+                    if let location = location {
+                        region.center = location.coordinate
+                    }
+                }
+                viewModel.fetchAllOtherBids()
+            }
+
+            if let selectedBid = selectedBid {
                 VStack {
-                    Image(systemName: "mappin.circle.fill")
-                        .foregroundColor(.red)
-                        .font(.title)
-                    Text(bid.name)
-                        .font(.caption)
+                    Spacer()
+                    BidDetailPopup(bid: selectedBid) {
+                        self.selectedBid = nil
+                    }
                 }
+                .transition(.move(edge: .bottom))
             }
-        }
-        
-        .edgesIgnoringSafeArea(.all)
-        .onAppear {
-            LocationManager.shared.requestCurrentLocation { location in
-                if let location = location {
-                    region.center = location.coordinate
-                }
-            }
-            viewModel.fetchAllOtherBids()
         }
         .navigationTitle("Map")
         .navigationBarTitleDisplayMode(.inline)
@@ -289,5 +305,91 @@ struct LocationMapCardView: View {
                 region.center = location.coordinate
             }
         }
+    }
+}
+
+
+struct BidDetailPopup: View {
+    let bid: Bid
+    var onClose: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(bid.name)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                Image(systemName: "tag.fill")
+                    .foregroundColor(.green)
+                    .padding(.leading)
+                Text("Rs. \(bid.price)")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                Spacer()
+                Button(action: onClose) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                }
+            }
+
+            Divider()
+
+            HStack {
+                Image(systemName: "location.fill")
+                    .foregroundColor(.blue)
+                Text(bid.location)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                Image(systemName: "calendar.circle.fill")
+                    .foregroundColor(.purple)
+                Text(bid.date)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+
+          
+
+            HStack {
+                Image(systemName: "weight.fill")
+                    .foregroundColor(.orange)
+                Text("\(bid.totalWeight) kg")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+
+           
+
+            HStack {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.yellow)
+                Text(bid.status?.rawValue ?? "Pending")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            Button(action: onClose) {
+                Text("Close")
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.splashGreen)
+                    .cornerRadius(8)
+            }
+        }
+        .padding(16)
+        .background(RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white)
+                        .shadow(radius: 8))
+        .frame(maxWidth: .infinity, maxHeight: 200)
+        .padding(.horizontal)
+        .transition(.move(edge: .bottom))
+        .animation(.easeInOut)
     }
 }
