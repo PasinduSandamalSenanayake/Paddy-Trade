@@ -96,7 +96,7 @@ class HarvestViewModel: ObservableObject {
 
                 self?.harvests = snapshot.documents.compactMap { doc in
                     var harvest = try? doc.data(as: Harvest.self)
-                    harvest?.id = doc.documentID  // Assign the document ID
+                    harvest?.id = doc.documentID
                     return harvest
                 }
                 

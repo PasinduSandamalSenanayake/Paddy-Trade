@@ -32,7 +32,9 @@ struct ContentView: View {
                     SampleDataManager.shared.addSampleBidsIfNeeded()
                 }
         } else if showLogin {
-            SignInView()
+            SignInView(onSignInSuccess: {
+                isAuthenticated = true
+            })
         } else {
             SplashView()
         }

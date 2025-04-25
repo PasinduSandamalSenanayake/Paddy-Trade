@@ -15,44 +15,39 @@ class SampleDataManager {
     
     private let db = Firestore.firestore()
     
-    // Add the sample data only if it's needed (if the collection is empty).
     func addSampleBidsIfNeeded() {
         checkAndSeedSampleBids()
         checkAndSeedSampleHarvests()
     }
     
-    // Check if any bids already exist in the collection, then seed if needed
     private func checkAndSeedSampleBids() {
         let bidsRef = db.collection("userBids")
         bidsRef.getDocuments { (querySnapshot, error) in
             if let error = error {
-                print("❌ Error fetching user bids: \(error.localizedDescription)")
+                print("Error fetching user bids: \(error.localizedDescription)")
                 return
             }
             
-            // If no bids exist, seed them
             if querySnapshot?.isEmpty ?? true {
                 self.seedSampleBids()
             } else {
-                print("✅ Bids already exist in Firestore. Skipping seeding.")
+                print("Bids already exist in Firestore. Skipping seeding.")
             }
         }
     }
     
-    // Check if any harvests already exist in the collection, then seed if needed
     private func checkAndSeedSampleHarvests() {
         let harvestsRef = db.collection("harvests")
         harvestsRef.getDocuments { (querySnapshot, error) in
             if let error = error {
-                print("❌ Error fetching harvests: \(error.localizedDescription)")
+                print("Error fetching harvests: \(error.localizedDescription)")
                 return
             }
             
-            // If no harvests exist, seed them
             if querySnapshot?.isEmpty ?? true {
                 self.seedSampleHarvests()
             } else {
-                print("✅ Harvests already exist in Firestore. Skipping seeding.")
+                print("Harvests already exist in Firestore. Skipping seeding.")
             }
         }
     }
@@ -80,17 +75,17 @@ class SampleDataManager {
         for bid in sampleBids {
             do {
                 let encoded = try Firestore.Encoder().encode(bid)
-                print("📝 Encoding succeeded for user \(bid.userId)")
+                print("Encoding succeeded for user \(bid.userId)")
                 
                 db.collection("userBids").addDocument(data: encoded) { error in
                     if let error = error {
-                        print("❌ Firestore write failed for user \(bid.userId): \(error.localizedDescription)")
+                        print("Firestore write failed for user \(bid.userId): \(error.localizedDescription)")
                     } else {
-                        print("✅ Successfully added bid for user: \(bid.userId)")
+                        print("Successfully added bid for user: \(bid.userId)")
                     }
                 }
             } catch {
-                print("❌ Failed to encode sample bid: \(error.localizedDescription)")
+                print("Failed to encode sample bid: \(error.localizedDescription)")
             }
         }
     }
@@ -111,17 +106,17 @@ class SampleDataManager {
         for harvest in sampleHarvests {
             do {
                 let encoded = try Firestore.Encoder().encode(harvest)
-                print("📝 Encoding succeeded for harvest \(harvest.name)")
+                print("Encoding succeeded for harvest \(harvest.name)")
                 
                 db.collection("harvests").addDocument(data: encoded) { error in
                     if let error = error {
-                        print("❌ Firestore write failed for harvest \(harvest.name): \(error.localizedDescription)")
+                        print("Firestore write failed for harvest \(harvest.name): \(error.localizedDescription)")
                     } else {
-                        print("✅ Successfully added harvest for \(harvest.name)")
+                        print("Successfully added harvest for \(harvest.name)")
                     }
                 }
             } catch {
-                print("❌ Failed to encode sample harvest: \(error.localizedDescription)")
+                print("Failed to encode sample harvest: \(error.localizedDescription)")
             }
         }
     }

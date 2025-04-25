@@ -49,7 +49,7 @@ class BidDetailViewModel: ObservableObject {
             userBid: userBidAmount,
             totalPrice: totalPrice,
             timestamp: Date(),
-            userId: currentUser.uid // 👈 Set user ID
+            userId: currentUser.uid
         )
         
         do {

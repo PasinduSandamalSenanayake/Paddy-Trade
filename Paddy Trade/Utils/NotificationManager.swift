@@ -14,18 +14,16 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     
     private override init() {}
     
-    // REquest permissions
     func requestAuthorization() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
-                print("❌ Notification permission error: \(error.localizedDescription)")
+                print("Notification permission error: \(error.localizedDescription)")
             } else {
-                print("✅ Notification permission granted: \(granted)")
+                print("Notification permission granted: \(granted)")
             }
         }
     }
     
-    // ScheduleNotification in next seconds
     func scheduleNotification(title: String, body: String, afterSeconds seconds: TimeInterval) {
         let content = UNMutableNotificationContent()
         content.title = title
@@ -37,14 +35,13 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Failed to schedule notification: \(error.localizedDescription)")
+                print("Failed to schedule notification: \(error.localizedDescription)")
             } else {
-                print("✅ Notification scheduled in \(seconds) seconds")
+                print("Notification scheduled in \(seconds) seconds")
             }
         }
     }
     
-    // Handle notifications in the foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .sound])
     }

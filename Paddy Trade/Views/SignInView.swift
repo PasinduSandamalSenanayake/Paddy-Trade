@@ -15,6 +15,7 @@ struct SignInView: View {
     @State private var navigateHome: Bool = false
     @State private var navigateRegister: Bool = false
     @State private var errorMessage: IdentifiableString?
+    var onSignInSuccess: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -118,7 +119,7 @@ struct SignInView: View {
             if let error = error {
                 errorMessage = IdentifiableString(error.localizedDescription)
             } else {
-                navigateHome = true
+                onSignInSuccess()
                 email = ""
                 password = ""
             }
@@ -136,5 +137,7 @@ struct IdentifiableString: Identifiable {
 }
 
 #Preview {
-    SignInView()
+    SignInView(onSignInSuccess: {
+        
+    })
 }

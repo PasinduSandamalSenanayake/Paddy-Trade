@@ -33,14 +33,20 @@ struct HomeView: View {
                                 .font(.system(size: 22 , weight: .semibold))
                         }
                         Spacer()
-                        NavigationLink(destination: NotificationListView()) {
-                            Image(systemName: "bell.fill")
-                                .fontWeight(.medium)
-                                .font(.system(size: 25))
-                                .padding(.top, 3)
-                                .foregroundColor(.splashGreen)
+                        HStack(spacing: 20) {
+                            NavigationLink(destination: NotificationListView()) {
+                                Image(systemName: "bell.fill")
+                                    .font(.system(size: 25))
+                                    .foregroundColor(.splashGreen)
+                            }
+
+                            NavigationLink(destination: ProfileView()) {
+                                Image(systemName: "person.crop.circle")
+                                    .font(.system(size: 25))
+                                    .foregroundColor(.splashGreen)
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle())
+
                     }
                 }
                 .padding()
@@ -56,11 +62,9 @@ struct HomeView: View {
                 .padding(.horizontal)
 
                 
-                // Full-width Weather Card
                 WeatherCardView()
                     .padding(.horizontal)
 
-                // Full-width Map Card
                 NavigationLink(destination: FullMapView()) {
                     LocationMapCardView()
                         .padding(.horizontal)
@@ -103,9 +107,9 @@ struct HomeView: View {
         .onAppear {
             NotificationManager.shared.requestAuthorization()
             
-            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid cappted . Please Call 07612322123 ", afterSeconds: 20)
-            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid cappted . Please Call 07612322123 ", afterSeconds: 30)
-            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid cappted . Please Call 07612322123 ", afterSeconds: 40)
+            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid accepted . Please Call 07612322123 ", afterSeconds: 20)
+            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid accepted . Please Call 07612322123 ", afterSeconds: 40)
+            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid accepted . Please Call 07612322123 ", afterSeconds: 60)
         }
     }
 }
@@ -258,7 +262,7 @@ struct FullMapView: View {
 
 struct LocationMapCardView: View {
     @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718), // Sri Lanka center as fallback
+        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718),
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
 

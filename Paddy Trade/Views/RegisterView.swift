@@ -22,7 +22,9 @@ struct RegisterView: View {
             ZStack {
                 Spacer()
                 
-                NavigationLink(destination: SignInView(), isActive: $navigateSignIn) {
+                NavigationLink(destination: SignInView(onSignInSuccess: {
+                    
+                }), isActive: $navigateSignIn) {
                     EmptyView()
                 }
                 .hidden()

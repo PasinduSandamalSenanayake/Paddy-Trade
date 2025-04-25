@@ -29,7 +29,6 @@ struct Harvest: Identifiable, Codable {
         case status
     }
     
-    // Custom initializer
     init(
         name: String,
         rate: Int,
@@ -48,7 +47,6 @@ struct Harvest: Identifiable, Codable {
         self.status = status
     }
     
-    // Custom encoding for CLLocationCoordinate2D
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
@@ -69,7 +67,6 @@ struct Harvest: Identifiable, Codable {
         }
     }
     
-    // Custom decoding for CLLocationCoordinate2D
     func encode(to encoder: Encoder) throws {
         var container = try encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
