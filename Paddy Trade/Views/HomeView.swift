@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import CoreLocation
+import Combine
+import _MapKit_SwiftUI
 
 struct HomeView: View {
     let cards: [CardData] = [
@@ -53,7 +56,17 @@ struct HomeView: View {
                 .padding(.horizontal)
 
                 
-                //WeatherCardView()
+                // Full-width Weather Card
+                WeatherCardView()
+                    .padding(.horizontal)
+
+                // Full-width Map Card
+                NavigationLink(destination: FullMapView()) {
+                    LocationMapCardView()
+                        .padding(.horizontal)
+                }
+                .buttonStyle(PlainButtonStyle())
+
 
                 
                 LazyVGrid(columns: columns, spacing: 20) {
@@ -89,6 +102,10 @@ struct HomeView: View {
             }
         .onAppear {
             NotificationManager.shared.requestAuthorization()
+            
+            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid cappted . Please Call 07612322123 ", afterSeconds: 20)
+            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid cappted . Please Call 07612322123 ", afterSeconds: 30)
+            NotificationManager.shared.scheduleNotification(title: "#Harvest123 Bid Accepted", body: "Your Harvest123 bid cappted . Please Call 07612322123 ", afterSeconds: 40)
         }
     }
 }
@@ -149,66 +166,124 @@ struct CardView: View {
     }
 }
 
-struct WeatherCardView : View {
+
+
+struct WeatherCardView: View {
     @StateObject private var viewModel = WeatherViewModel()
-
+    
     var body: some View {
-
-                    VStack(spacing: 20) {
-                        VStack(spacing: 8) {
-                            TextField("Search location", text: $viewModel.searchQuery)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .padding(.horizontal)
-                                .onChange(of: viewModel.searchQuery) { _ in
-                                    viewModel.updateSearchResults()
-                                }
-
-                            List(viewModel.searchResults, id: \.self) { result in
-                                Button(action: {
-                                    viewModel.selectLocation(completion: result)
-                                }) {
-                                    Text(result.title + ", " + result.subtitle)
-                                }
-                            }
-                            .frame(height: viewModel.searchResults.isEmpty ? 0 : 200)
-                        }
-
-                        if let weather = viewModel.weather {
-                            VStack(spacing: 12) {
-                                Text(viewModel.locationName)
-                                    .font(.title)
-                                    .bold()
-
-                                Text("\(Int(weather.currentWeather.temperature.value))°\(weather.currentWeather.temperature.unit.symbol)")
-                                    .font(.system(size: 64, weight: .bold))
-
-                                Text(weather.currentWeather.condition.description)
-                                    .font(.headline)
-
-                                HStack {
-                                    Text("Wind: \(Int(weather.currentWeather.wind.speed.value)) \(weather.currentWeather.wind.speed.unit.symbol)")
-                                    Spacer()
-                                    Text("Humidity: \(Int(weather.currentWeather.humidity * 100))%")
-                                }
-                                .padding(.horizontal)
-                                .font(.subheadline)
-                            }
-                            .padding()
-                            .background(Color.blue.opacity(0.1))
-                            .cornerRadius(16)
-                            .padding(.horizontal)
-                        } else {
-                            ProgressView("Loading weather...")
-                                .padding()
-                        }
-
+        VStack(alignment: .leading, spacing: 12) {
+            if let weather = viewModel.weather {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack{
+                        Text(viewModel.locationName)
+                            .font(.title2)
+                            .bold()
                         Spacer()
+                        
+                        Text("\(weather.condition) climate")
+                            .font(.headline)
                     }
-                    .navigationTitle("Weather")
+                    
+                    Text("\(Int(weather.temperature))°C")
+                        .font(.system(size: 48, weight: .bold))
+                   
+                    
+                    HStack {
+                        Text("Wind: \(Int(weather.windSpeed)) km/h")
+                        Spacer()
+                        Text("Humidity: \(weather.humidity)%")
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                 }
+                .padding()
+                .background(Color.green.opacity(0.15))
+                .cornerRadius(16)
+                .padding(.vertical, 10)
+            } else {
+                ProgressView("Fetching Weather...")
+                    .padding()
             }
+        }
+        .onAppear {
+            viewModel.fetchWeather()
+        }
+    }
+}
 
 
 #Preview {
     HomeView()
+}
+
+
+struct FullMapView: View {
+    @StateObject private var viewModel = BidDetailViewModel()
+
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718),
+        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    )
+
+    var body: some View {
+        Map(coordinateRegion: $region, annotationItems: viewModel.bids) { bid in
+            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: bid.latitude, longitude: bid.longitude)) {
+                VStack {
+                    Image(systemName: "mappin.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title)
+                    Text(bid.name)
+                        .font(.caption)
+                }
+            }
+        }
+        
+        .edgesIgnoringSafeArea(.all)
+        .onAppear {
+            LocationManager.shared.requestCurrentLocation { location in
+                if let location = location {
+                    region.center = location.coordinate
+                }
+            }
+            viewModel.fetchAllOtherBids()
+        }
+        .navigationTitle("Map")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+
+
+
+struct LocationMapCardView: View {
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718), // Sri Lanka center as fallback
+        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+    )
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Recent Bid Areas")
+                .font(.headline)
+                .padding([.top, .horizontal])
+
+            Map(coordinateRegion: $region)
+                .frame(height: 200)
+                .cornerRadius(16)
+                .onAppear {
+                    getCurrentLocation()
+                }
+        }
+        .background(Color.white)
+        .cornerRadius(16)
+    }
+
+    private func getCurrentLocation() {
+        LocationManager.shared.requestCurrentLocation { location in
+            if let location = location {
+                region.center = location.coordinate
+            }
+        }
+    }
 }

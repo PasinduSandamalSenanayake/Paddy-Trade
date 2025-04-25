@@ -2,86 +2,63 @@
 //  WeatherViewModel.swift
 //  Paddy Trade
 //
-//  Created by Sandamal on 2025-04-19.
+//  Created by Sandamal on 2025-04-25.
 //
 
 import Foundation
-import SwiftUI
+import Foundation
 import CoreLocation
-import WeatherKit
-import MapKit
 
-@MainActor
 class WeatherViewModel: NSObject, ObservableObject {
-    @Published var weather: Weather?
-        @Published var locationName: String = "Current Location"
-        @Published var searchQuery = ""
-        @Published var searchResults: [MKLocalSearchCompletion] = []
+    @Published var weather: WeatherData?
+    @Published var locationName = "Your Location"
 
-        private let weatherService = WeatherService()
-        private let locationManager = CLLocationManager()
-        
-        private lazy var completer: MKLocalSearchCompleter = {
-            let c = MKLocalSearchCompleter()
-            c.resultTypes = .address
-            c.delegate = self
-            return c
-        }()
+    private let locationManager = CLLocationManager()
 
-        override init() {
-            super.init()
-            requestLocation()
-        }
+    override init() {
+        super.init()
+        locationManager.delegate = self
+    }
 
-        func updateSearchResults() {
-            completer.queryFragment = searchQuery
-        }
-    func requestLocation() {
+    func fetchWeather() {
         locationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled(),
-           let location = locationManager.location {
-            Task {
-                await fetchWeather(for: location)
-            }
-        }
+        locationManager.requestLocation()
     }
 
-    func fetchWeather(for location: CLLocation) async {
-        do {
-            let weather = try await weatherService.weather(for: location)
-            self.weather = weather
+    private func getWeather(for location: CLLocation) {
+        let lat = location.coordinate.latitude
+        let lon = location.coordinate.longitude
+        let apiKey = "8e542a88fcc3216487d7c4caae05b728"
+        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&units=metric&appid=\(apiKey)"
 
-            let geocoder = CLGeocoder()
-            if let placemark = try? await geocoder.reverseGeocodeLocation(location).first {
-                self.locationName = placemark.locality ?? "Selected Location"
+        guard let url = URL(string: urlString) else { return }
+
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else { return }
+
+            if let decoded = try? JSONDecoder().decode(OpenWeatherResponse.self, from: data) {
+                DispatchQueue.main.async {
+                    self.weather = WeatherData(
+                        temperature: decoded.main.temp,
+                        condition: decoded.weather.first?.main ?? "N/A",
+                        windSpeed: decoded.wind.speed,
+                        humidity: decoded.main.humidity
+                    )
+                    self.locationName = decoded.name
+                }
             }
-        } catch {
-            print("Error fetching weather: \(error)")
-        }
-    }
-
-
-
-    func selectLocation(completion: MKLocalSearchCompletion) {
-        let request = MKLocalSearch.Request(completion: completion)
-        let search = MKLocalSearch(request: request)
-
-        search.start { [weak self] response, error in
-            guard let coordinate = response?.mapItems.first?.placemark.coordinate else { return }
-            let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-            Task {
-                await self?.fetchWeather(for: location)
-            }
-        }
-        searchQuery = ""
-        searchResults = []
+        }.resume()
     }
 }
 
-extension WeatherViewModel: MKLocalSearchCompleterDelegate {
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        searchResults = completer.results
+extension WeatherViewModel: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            getWeather(for: location)
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location error: \(error.localizedDescription)")
     }
 }
-
-
